@@ -1,4 +1,5 @@
 import asyncio
+import re
 
 from src import wikipedia_histories
 
@@ -72,6 +73,13 @@ def test_invalid_language_code() -> None:
     lang = ""
     text = asyncio.run(wikipedia_histories.get_text(321061, lang_code=lang))
     assert text == -1
+
+
+def test_get_text_raw_html() -> None:
+    # use a known revision id for testing raw html
+    html_text = asyncio.run(wikipedia_histories.get_text(321061, lang_code="zh-min-nan", raw_html=True))
+    # Check that the returned text contains an HTML tag (e.g., <p>)
+    assert re.search(r"<\s*p", html_text, re.IGNORECASE) is not None
 
 
 def test_integration() -> None:
